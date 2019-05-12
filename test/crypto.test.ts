@@ -18,4 +18,12 @@ describe('message.ts', () => {
     console.log(hash.toString('hex'))
     expect(hash.equals(result)).toBe(true)
   })
+
+  test('ripemd160', () => {
+    let data = Buffer.from('abc')
+    let result = Buffer.from('8eb208f7e05d987a9b044a8e98c6b087f15a0bfc', 'hex')
+    let hash = Crypto.ripemd160(data)
+    console.log(hash.toString('hex'))
+    expect(hash.equals(result)).toBe(true)
+  })
 })

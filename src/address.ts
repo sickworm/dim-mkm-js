@@ -120,18 +120,37 @@ class Address implements AddressConstructor {
         this.code = address.code
     }
 
+    /**
+     *  Copy address data
+     *
+     *  @param string - Encoded address string
+     */
     public static fromString(string: string): Address {
         let data = Crypto.base58Decode(string)
         if (data.length != 25) {
             throw Error('Address fromString data.length != 25')
         }
         let network = data[0] as NetworkType
-        let code = 1
+        let code = Address.userNumber(Crypto.hash256(Crypto.hash256(data.slice(0, 21))))
         return new Address({string, network, code})
     }
 
+    /**
+     *  Generate address with fingerprint and network ID
+     *
+     *  @param fingerprint = sign(seed, PK)
+     *  @param network - network ID
+     */
     public static fromFingerprint(fingerprint: Buffer, network: NetworkType): Address {
-        
+        let digest = Crypto.ripemd160(Crypto.hash256(fingerprint))
+        let head = Buffer.alloc(21)
+        head[0] = network as number
+        digest.copy(head, 1)
+        let cc = Crypto.hash256(Crypto.hash256(head))
+        let code = Address.userNumber(cc)
+        let data = Buffer.concat([head, cc])
+        let string = Crypto.base58Encode(data)
+        return new Address({string, network, code})
     }
 
     private static userNumber(cc: Buffer): number {

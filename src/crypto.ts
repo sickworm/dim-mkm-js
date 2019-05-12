@@ -14,6 +14,10 @@ export class Crypto {
         return Crypto.toBuffer(CryptoJS.SHA256(Crypto.toLibWordArray(data)))
     }
 
+    public static ripemd160(data: Buffer): Buffer {
+        return Crypto.toBuffer(CryptoJS.RIPEMD160(Crypto.toLibWordArray(data)))
+    }
+
     private static toLibWordArray(buffer: Buffer): CryptoJS.LibWordArray {
         return CryptoJS.lib.WordArray.create(buffer)
     }
