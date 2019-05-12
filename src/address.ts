@@ -163,3 +163,5 @@ interface AddressConstructor {
     network: NetworkType
     code: number
 }
+
+export {NetworkType, Address}

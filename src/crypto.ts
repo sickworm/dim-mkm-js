@@ -1,7 +1,9 @@
-import CryptoJS = require('crypto-js')
-import bs58 = require('bs58')
+import * as CryptoJS from 'crypto-js'
+import * as bs58 from 'bs58'
+import { privateDecrypt } from 'crypto';
+import { setFlagsFromString } from 'v8';
 
-export class Crypto {
+class Crypto {
     public static base58Decode(address: string): Buffer {
         return bs58.decode(address)
     }
@@ -32,3 +34,21 @@ export class Crypto {
         return buffer
     }
 }
+
+interface AsymKey {
+    algorithm: string
+    data: any
+    toString(): string
+}
+
+interface PublicKey extends AsymKey {
+    verify(data: Buffer): boolean
+    encrypt(data: Buffer): Buffer
+}
+
+interface PrivateKey extends AsymKey {
+    sign(data: Buffer): Buffer
+    decrypt(data: Buffer): Buffer
+}
+
+export {Crypto, PublicKey, PrivateKey}
