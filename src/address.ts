@@ -164,4 +164,4 @@ interface AddressConstructor {
     code: number
 }
 
-export {NetworkType, Address}
+export { NetworkType, Address }

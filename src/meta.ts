@@ -1,4 +1,4 @@
-import {ID} from './identifier'
+import { ID } from './identifier'
 /**
  *  Account/Group Meta data
  *
@@ -18,34 +18,23 @@ import {ID} from './identifier'
  *          address = base58_encode(network + hash + code);
  *          number  = uint(code);
  */
-class Meta implements MetaConstructor {
-    static readonly VERSION_MKM: number  = 0x01
-    static readonly VERSION_BTC: number  = 0x02
-    static readonly VERSION_EX_BTC: number  = 0x03
-    static readonly VERSION_DEFAULT: number  = Meta.VERSION_MKM
-    
+
+const Version = {
+    MKM: 0x01,
+    BTC: 0x02,
+    EX_BTC: 0x03,
+    DEFAULT: 0x01
+}
+
+interface Meta {
     readonly version: number
     readonly publicKey: string
     readonly seed: string
     readonly fingerprint: Buffer
-
-    public constructor(meta: MetaConstructor) {
-        this.version = meta.version
-        this.publicKey = meta.publicKey
-        this.seed = meta.seed
-        this.fingerprint = meta.fingerprint
-    }
-}
-
-interface MetaConstructor {
-    version: number
-    publicKey: string
-    seed: string
-    fingerprint: Buffer
 }
 
 interface MetaDataSource {
     getMeta(identifier: ID): Meta
 }
 
-export {Meta, MetaDataSource}
+export {Version, Meta, MetaDataSource}

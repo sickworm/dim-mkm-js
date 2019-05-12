@@ -11,4 +11,4 @@ let makeId = () => {
 
 }
 
-export {ID}
+export { ID }

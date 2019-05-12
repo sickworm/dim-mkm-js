@@ -1,6 +1,6 @@
 import { ID } from './identifier'
 import { Meta } from './meta'
-import { PublicKey, PrivateKey } from './crypto';
+import { PublicKey, PrivateKey } from './crypto'
 
 /**
     Entity (Account/Group)
@@ -8,25 +8,15 @@ import { PublicKey, PrivateKey } from './crypto';
 
     Base class of Account and Group, ...
  */
-class Entity {
+interface Entity {
     readonly identifier: ID
-
-    public constructor(identifier: ID) {
-        this.identifier = identifier
-    }
-
-    public toString(): string {
-        // TODO delegate?
-        let name = this.identifier.name || this.identifier.address.string
-        return `<${this.constructor.name}: ${this.identifier}(${this.identifier.address.network}|${this.identifier.address.code}) "${name}"`
-    }
 }
 
 interface Profile {
-    identifier: ID
-    name?: string
-    avatar?: string
-    [key: string]: any
+    readonly identifier: ID
+    readonly name?: string
+    readonly avatar?: string
+    readonly [key: string]: any
 }
 
 interface EntityDataSource {
@@ -35,22 +25,12 @@ interface EntityDataSource {
     getName(entity: Entity): string
 }
 
-class Account extends Entity {
-    publicKey: PublicKey
-
-    public constructor(identifier: ID, publicKey: PublicKey) {
-        super(identifier);
-        this.publicKey = publicKey
-    }
+interface Account extends Entity {
+    readonly publicKey: PublicKey
 }
 
-class Group extends Entity {
-    founder: ID
-
-    public constructor(identifier: ID, founder: ID) {
-        super(identifier);
-        this.founder = founder
-    }
+interface Group extends Entity {
+    readonly founder: ID
 }
 
 interface GroupDataSource {
@@ -59,13 +39,8 @@ interface GroupDataSource {
     getMembers(group: Group): Array<ID>
 }
 
-class User extends Account {
-    privateKey: PrivateKey
-
-    public constructor(identifier: ID, publicKey: PublicKey, privateKey: PrivateKey) {
-        super(identifier, publicKey)
-        this.privateKey = privateKey
-    }
+interface User extends Account {
+    readonly privateKey: PrivateKey
 }
 
 interface UserDataSource {
