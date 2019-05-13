@@ -51,4 +51,12 @@ interface PrivateKey extends AsymKey {
     decrypt(data: Buffer): Buffer
 }
 
-export {Crypto, PublicKey, PrivateKey}
+interface SymmKey {
+    algorithm: string
+    data: string
+
+    encrypt(data: Buffer): Buffer
+    decrypt(enc: Buffer): Buffer
+}
+
+export { Crypto, PublicKey, PrivateKey, SymmKey }
