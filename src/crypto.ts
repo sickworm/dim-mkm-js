@@ -37,8 +37,7 @@ class Crypto {
 
 interface AsymKey {
     algorithm: string
-    data: any
-    toString(): string
+    data: string
 }
 
 interface PublicKey extends AsymKey {
