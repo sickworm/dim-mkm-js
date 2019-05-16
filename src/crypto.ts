@@ -4,6 +4,7 @@ import { privateDecrypt } from 'crypto';
 import { setFlagsFromString } from 'v8';
 
 class Crypto {
+
     public static base58Decode(address: string): Buffer {
         return bs58.decode(address)
     }
@@ -38,6 +39,8 @@ class Crypto {
 interface AsymKey {
     algorithm: string
     data: string
+
+    toBuffer(): Buffer
 }
 
 interface PublicKey extends AsymKey {
@@ -48,6 +51,7 @@ interface PublicKey extends AsymKey {
 interface PrivateKey extends AsymKey {
     sign(data: Buffer): Buffer
     decrypt(data: Buffer): Buffer
+    toPublicKey(): PublicKey
 }
 
 interface SymmKey {

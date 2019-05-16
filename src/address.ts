@@ -120,6 +120,10 @@ class Address implements AddressConstructor {
         this.code = address.code
     }
 
+    public toString() {
+        return this.string
+    }
+
     /**
      *  Copy address data
      *
@@ -154,7 +158,8 @@ class Address implements AddressConstructor {
     }
 
     private static userNumber(cc: Buffer): number {
-        return (cc[3] & 0xFF) << 24 | (cc[2] & 0xFF) << 16 | (cc[1] & 0xFF) << 8 | (cc[0] & 0xFF);
+        return ((cc[3] & 0xFF) << 24 >>> 0) + ((cc[2] & 0xFF) << 16 >>> 0)  +
+            ((cc[1] & 0xFF) << 8 >>> 0)  + ((cc[0] & 0xFF) >>> 0) ;
     }
 }
 
