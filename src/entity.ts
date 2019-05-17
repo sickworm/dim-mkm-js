@@ -44,7 +44,7 @@ interface User extends Account {
 }
 
 interface UserDataSource {
-    getPrivateKey(user: User): PrivateKey // TODO user ID ?
+    getPrivateKey(user: User): PrivateKey
     getContacts(user: User): Array<Account>
 }
 

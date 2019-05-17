@@ -1,6 +1,8 @@
 import { ID } from './identifier'
 import { Crypto, PrivateKey, PublicKey } from './crypto';
 import { Address, NetworkType } from './address';
+import { verify } from 'crypto';
+import { identifier } from '@babel/types';
 
 /**
  *  Account/Group Meta data
@@ -37,15 +39,41 @@ class Meta implements MetaConstructor{
     public static fromKeyAndSeed(privateKey: PrivateKey, seed: string,
         version: MetaVersion = MetaVersion.DEFAULT): Meta {
         let publicKey = privateKey.toPublicKey()
-        let fingerprintData = version === MetaVersion.BTC ?
-            publicKey.toBuffer() :
-            privateKey.sign(Buffer.from(seed, 'utf-8'))
-        let fingerprint = Crypto.base58Encode(fingerprintData)
+        let fingerprint = version === MetaVersion.BTC ?
+            publicKey.data :
+            privateKey.sign(Buffer.from(seed, 'utf-8')).toString('base64')
         return new Meta({version, publicKey, seed, fingerprint})
     }
     
-    public matches(object: PublicKey | ID | Address | NetworkType): boolean {
-        return true;
+    public matches(object: PublicKey | ID | Address): boolean {
+        if (object instanceof ID) {
+            let identifier = this.buildId(object.type)
+            return identifier.equals(object)
+        } else if (object instanceof Address) {
+            let address
+        } else if (object.algorithm && object.data) { // PublicKey
+            return (this.publicKey.algorithm === object.algorithm) && (this.publicKey.data === object.data)
+        }
+        return false;
+    }
+
+    public buildId(network: NetworkType): ID {
+        let address = this.buildAddress(network)
+        if (this.version === MetaVersion.BTC) {
+            return ID.fromAddress(address)
+        } else {
+            // MKM & ExBTC
+            return ID.fromAddress(address, this.seed)
+        }
+    }
+
+    public buildAddress(network: NetworkType): Address {
+        if (this.version === MetaVersion.MKM) {
+            return Address.fromFingerprint(this.fingerprint, network)
+        } else {
+            // BTC & ExBTC
+            return Address.fromFingerprint(this.publicKey.data, network)
+        }
     }
 }
 

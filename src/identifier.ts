@@ -2,7 +2,7 @@ import {Address} from './address'
 
 class ID implements IDConstructor {
     readonly string: string
-    readonly name: string
+    readonly name?: string
     readonly address: Address
     readonly terminal?: string
 
@@ -40,14 +40,18 @@ class ID implements IDConstructor {
         return new ID({string, address, name, terminal})
     }
 
-    public static fromNameAndAddress(name: string, address: Address) {
+    public static fromAddress(address: Address, name?: string): ID {
         let string
         if (!name) {
             string = address.string
         } else {
             string = name + '@' + address.string
         }
-        return {string, name, address}
+        return new ID({string, name, address})
+    }
+
+    public equals(identifier: ID): boolean {
+        return this.name === identifier.name && this.address.euqals(identifier.address)
     }
 
     public toString(): string {
@@ -57,13 +61,9 @@ class ID implements IDConstructor {
 
 interface IDConstructor {
     readonly string: string
-    readonly name: string
+    readonly name?: string
     readonly address: Address
     readonly terminal?: string
-}
-
-let makeId = () => {
-
 }
 
 export { ID }
