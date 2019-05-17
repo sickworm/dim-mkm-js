@@ -29,14 +29,14 @@ class Meta implements MetaConstructor{
     readonly seed: string
     readonly fingerprint: string
 
-    public constructor(meta: MetaConstructor) {
+    constructor(meta: MetaConstructor) {
         this.version = meta.version
         this.publicKey = meta.publicKey
         this.seed = meta.seed
         this.fingerprint = meta.fingerprint
     }
 
-    public static fromKeyAndSeed(privateKey: PrivateKey, seed: string,
+    static fromKeyAndSeed(privateKey: PrivateKey, seed: string,
         version: MetaVersion = MetaVersion.DEFAULT): Meta {
         let publicKey = privateKey.toPublicKey()
         let fingerprint = version === MetaVersion.BTC ?
@@ -45,7 +45,7 @@ class Meta implements MetaConstructor{
         return new Meta({version, publicKey, seed, fingerprint})
     }
     
-    public matches(object: PublicKey | ID | Address): boolean {
+    matches(object: PublicKey | ID | Address): boolean {
         if (object instanceof ID) {
             let identifier = this.buildId(object.type)
             return identifier.equals(object)
@@ -57,7 +57,7 @@ class Meta implements MetaConstructor{
         return false;
     }
 
-    public buildId(network: NetworkType): ID {
+    buildId(network: NetworkType): ID {
         let address = this.buildAddress(network)
         if (this.version === MetaVersion.BTC) {
             return ID.fromAddress(address)
@@ -67,7 +67,7 @@ class Meta implements MetaConstructor{
         }
     }
 
-    public buildAddress(network: NetworkType): Address {
+    buildAddress(network: NetworkType): Address {
         if (this.version === MetaVersion.MKM) {
             return Address.fromFingerprint(this.fingerprint, network)
         } else {

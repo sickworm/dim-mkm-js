@@ -120,11 +120,11 @@ class Address implements AddressConstructor {
         this.code = address.code
     }
 
-    public euqals(address: Address): boolean {
+    euqals(address: Address): boolean {
         return this.string === address.string
     }
 
-    public toString(): string {
+    toString(): string {
         return this.string
     }
 
@@ -133,7 +133,7 @@ class Address implements AddressConstructor {
      *
      *  @param string - Encoded address string
      */
-    public static fromString(string: string): Address {
+    static fromString(string: string): Address {
         let data = Crypto.base58Decode(string)
         if (data.length != 25) {
             throw Error('Address fromString data.length != 25')
@@ -149,7 +149,7 @@ class Address implements AddressConstructor {
      *  @param fingerprint = sign(seed, PK)
      *  @param network - network ID
      */
-    public static fromFingerprint(fingerprint: string, network: NetworkType): Address {
+    static fromFingerprint(fingerprint: string, network: NetworkType): Address {
         let digest = Crypto.ripemd160(Crypto.hash256(Buffer.from(fingerprint, 'base64')))
         let head = Buffer.alloc(21)
         head[0] = network as number

@@ -21,7 +21,7 @@ class ID implements IDConstructor {
         this.terminal  = id.terminal
     }
 
-    public static fromString(string: string): ID {
+    static fromString(string: string): ID {
         let pair = string.split('/')
         let terminal = undefined
         if (pair.length > 1) {
@@ -40,7 +40,7 @@ class ID implements IDConstructor {
         return new ID({string, address, name, terminal})
     }
 
-    public static fromAddress(address: Address, name?: string): ID {
+    static fromAddress(address: Address, name?: string): ID {
         let string
         if (!name) {
             string = address.string
@@ -50,11 +50,11 @@ class ID implements IDConstructor {
         return new ID({string, name, address})
     }
 
-    public equals(identifier: ID): boolean {
+    equals(identifier: ID): boolean {
         return this.name === identifier.name && this.address.euqals(identifier.address)
     }
 
-    public toString(): string {
+    toString(): string {
         return this.string
     }
 }
