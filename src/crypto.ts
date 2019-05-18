@@ -39,17 +39,18 @@ class RsaPrivateKey implements PrivateKey {
 
     static create(bits: number = 1024): RsaPrivateKey {
         let key = new NodeRSA({b: bits})
-        return new RsaPrivateKey({algorithm: 'RSA' + bits, data: key.exportKey()})
+        return new RsaPrivateKey({algorithm: 'RSA' + bits, data: key.exportKey('pkcs8-private-pem')})
     }
 
     static fromPem(pem: string): RsaPrivateKey {
-        let key = new NodeRSA(pem)
-        return new RsaPrivateKey({algorithm: 'RSA' + key.getKeySize(), data: key.exportKey()})
+        let format: NodeRSA.FormatPem = pem.includes('RSA') ? 'pkcs1-private-pem' : 'pkcs8-private-pem'
+        let key = new NodeRSA(pem, format)
+        return new RsaPrivateKey({algorithm: 'RSA' + key.getKeySize(), data: key.exportKey(format)})
     }
 
     toPublicKey(): PublicKey {
-        let publicKey = new NodeRSA(this._key.exportKey('components-public-pem'))
-        return new RsaPublicKey({algorithm: 'RSA' + publicKey.getKeySize(), data: publicKey.exportKey()})
+        let data = this._key.exportKey('pkcs8-public-pem')
+        return new RsaPublicKey({algorithm: this.algorithm, data: data})
     }
 
     sign(data: Buffer): Buffer {
@@ -70,6 +71,12 @@ class RsaPublicKey implements PublicKey {
         this.algorithm = key.algorithm
         this.data = key.data
         this._key = new NodeRSA(key.data)
+    }
+
+    static fromPem(pem: string) {
+        let format: NodeRSA.FormatPem = 'pkcs8-public-pem'
+        let key = new NodeRSA(pem, format)
+        return new RsaPrivateKey({algorithm: 'RSA' + key.getKeySize(), data: key.exportKey(format)})
     }
 
     static fromPrivateKey(key: RsaPrivateKey) {
