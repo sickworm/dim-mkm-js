@@ -1,4 +1,5 @@
-import { Crypto, RsaPrivateKey, RsaPublicKey } from '../src/crypto'
+import { Crypto, RsaPrivateKey, RsaPublicKey, AesSymmKey } from '../src/crypto'
+import * as CryptoJS from 'crypto-js'
 
 describe('crypto.ts', () => {
 
@@ -106,5 +107,12 @@ describe('crypto.ts', () => {
     })
 
     test('AES', () => {
+        let key = AesSymmKey.create()
+        let data = Buffer.from('0102030405', 'hex')
+        let encData = key.encrypt(data)
+        expect(encData).not.toBeNull()
+
+        let originData = key.decrypt(encData)
+        expect(data.equals(originData)).toBe(true)
     })
 })
