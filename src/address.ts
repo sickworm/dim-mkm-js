@@ -95,6 +95,36 @@ enum NetworkType {
     Robot          = 0xC8  // 1100 1000
 }
 
+namespace NetworkType {
+    export function isCommunicator(value: NetworkType): boolean {
+        return (value & NetworkType.Main) !== 0 || value === NetworkType.BTCMain;
+    }
+
+    export function isPerson(value: NetworkType): boolean {
+        return value === NetworkType.Main || value === NetworkType.BTCMain;
+    }
+
+    export function isGroup(value: NetworkType): boolean {
+        return (value & NetworkType.Group) !== 0;
+    }
+
+    export function isStation(value: NetworkType): boolean {
+        return value === NetworkType.Station
+    }
+
+    export function isProvider(value: NetworkType): boolean {
+        return value === NetworkType.Provider
+    }
+
+    export function isThing(value: NetworkType): boolean {
+        return (value & NetworkType.Provider) !== 0
+    }
+
+    export function isRobot(value: NetworkType): boolean {
+        return value === NetworkType.Robot
+    }
+}
+
 /**
  *  Address like BitCoin
  *
