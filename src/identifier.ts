@@ -1,4 +1,4 @@
-import {Address} from './address'
+import {Address, NetworkType} from './address'
 
 class ID implements IDConstructor {
     readonly string: string
@@ -10,7 +10,7 @@ class ID implements IDConstructor {
         return this.address.code
     }
 
-    get type(): number {
+    get type(): NetworkType {
         return this.address.network
     }
 

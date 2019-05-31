@@ -53,23 +53,23 @@ import {Crypto} from './crypto'
  *
  *      (All above are just some advices to help choosing numbers :P)
  */
-enum NetworkType {
-    BTCMain        = 0x00, // 0000 0000
+class NetworkType {
+    static readonly BTCMain        = new NetworkType(0x00) // 0000 0000
     //BTCTest      (0x6f), // 0110 1111
 
     /**
      *  Person Account
      */
-    Main           = 0x08, // 0000 1000 (Person)
+    static readonly Main           = new NetworkType(0x08) // 0000 1000 (Person)
 
     /**
      *  Virtual Groups
      */
-    Group          = 0x10, // 0001 0000 (Multi-Persons)
+    static readonly Group          = new NetworkType(0x10) // 0001 0000 (Multi-Persons)
 
     //Moments      = 0x18, // 0001 1000 (Twitter)
-    Polylogue      = 0x10, // 0001 0000 (Multi-Persons Chat, N < 100)
-    Chatroom       = 0x30, // 0011 0000 (Multi-Persons Chat, N >= 100)
+    static readonly Polylogue      = new NetworkType(0x10) // 0001 0000 (Multi-Persons Chat, N < 100)
+    static readonly Chatroom       = new NetworkType(0x30) // 0011 0000 (Multi-Persons Chat, N >= 100)
 
     /**
      *  Social Entities in Reality
@@ -85,43 +85,63 @@ enum NetworkType {
     /**
      *  Network
      */
-    Provider       = 0x76, // 0111 0110 (Service Provider)
-    Station        = 0x88, // 1000 1000 (Server Node)
+    static readonly Provider       = new NetworkType(0x76) // 0111 0110 (Service Provider)
+    static readonly Station        = new NetworkType(0x88) // 1000 1000 (Server Node)
 
     /**
      *  Internet of Things
      */
-    Thing          = 0x80, // 1000 0000 (IoT)
-    Robot          = 0xC8  // 1100 1000
-}
+    static readonly Thing          = new NetworkType(0x80) // 1000 0000 (IoT)
+    static readonly Robot          = new NetworkType(0xC8) // 1100 1000
 
-namespace NetworkType {
-    export function isCommunicator(value: NetworkType): boolean {
-        return (value & NetworkType.Main) !== 0 || value === NetworkType.BTCMain;
+    value: number
+
+    private constructor(value: number) {
+        this.value = value
     }
 
-    export function isPerson(value: NetworkType): boolean {
-        return value === NetworkType.Main || value === NetworkType.BTCMain;
+    static fromNumber(value: number): NetworkType {
+        switch(value) {
+            case this.BTCMain.value: return this.BTCMain
+            case this.Main.value: return this.Main
+            case this.Group.value: return this.Group
+            case this.Polylogue.value: return this.Polylogue
+            case this.Chatroom.value: return this.Chatroom
+            case this.Provider.value: return this.Provider
+            case this.Station.value: return this.Station
+            case this.Thing.value: return this.Thing
+            case this.Robot.value: return this.Robot
+            default:
+                throw new Error(`invalid NetworkType ${value}`)
+        }
     }
 
-    export function isGroup(value: NetworkType): boolean {
-        return (value & NetworkType.Group) !== 0;
+    isCommunicator(): boolean {
+        return (this.value & NetworkType.Main.value) !== 0 || this.value === NetworkType.BTCMain.value;
     }
 
-    export function isStation(value: NetworkType): boolean {
-        return value === NetworkType.Station
+    isPerson(): boolean {
+        return this.value === NetworkType.Main.value || this.value === NetworkType.BTCMain.value;
     }
 
-    export function isProvider(value: NetworkType): boolean {
-        return value === NetworkType.Provider
+    isGroup(): boolean {
+        return (this.value & NetworkType.Group.value) !== 0;
     }
 
-    export function isThing(value: NetworkType): boolean {
-        return (value & NetworkType.Provider) !== 0
+    isStation(): boolean {
+        return this.value === NetworkType.Station.value
     }
 
-    export function isRobot(value: NetworkType): boolean {
-        return value === NetworkType.Robot
+    isProvider(): boolean {
+        return this.value === NetworkType.Provider.value
+    }
+
+    isThing(): boolean {
+        return (this.value & NetworkType.Provider.value) !== 0
+    }
+
+    isRobot(): boolean {
+        return this.value === NetworkType.Robot.value
     }
 }
 
@@ -168,7 +188,7 @@ class Address implements AddressConstructor {
         if (data.length != 25) {
             throw Error('Address fromString data.length != 25')
         }
-        let network = data[0] as NetworkType
+        let network = NetworkType.fromNumber(data[0])
         let code = Address.userNumber(Crypto.hash256(Crypto.hash256(data.slice(0, 21))))
         return new Address({string, network, code})
     }
@@ -182,7 +202,7 @@ class Address implements AddressConstructor {
     static fromFingerprint(fingerprint: string, network: NetworkType): Address {
         let digest = Crypto.ripemd160(Crypto.hash256(Buffer.from(fingerprint, 'base64')))
         let head = Buffer.alloc(21)
-        head[0] = network as number
+        head[0] = network.value
         digest.copy(head, 1)
         let cc = Crypto.hash256(Crypto.hash256(head))
         let code = Address.userNumber(cc)

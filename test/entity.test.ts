@@ -8,11 +8,11 @@ describe('entity.ts', () => {
 
     test('address', () => {
         let address = Address.fromString('4WDfe3zZ4T7opFSi3iDAKiuTnUHjxmXekk')
-        expect(address.network).toBe(8)
+        expect(address.network).toBe(NetworkType.Main)
         expect(address.code).toBe(1840839527)
 
         address = Address.fromString('4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ')
-        expect(address.network).toBe(8)
+        expect(address.network).toBe(NetworkType.Main)
         expect(address.code).toBe(4049699527)
     })
 
