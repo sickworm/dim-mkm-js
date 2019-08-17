@@ -34,9 +34,9 @@ interface Group extends Entity {
 }
 
 interface GroupDataSource {
-    getFounder(group: Group): ID
-    getOwner(group: Group): ID
-    getMembers(group: Group): Array<ID>
+    getFounder(group: ID): ID
+    getOwner(group: ID): ID
+    getMembers(group: ID): ID[]
 }
 
 interface User extends Account {
@@ -45,7 +45,7 @@ interface User extends Account {
 
 interface UserDataSource {
     getPrivateKey(user: User): PrivateKey
-    getContacts(user: User): Array<Account>
+    getContacts(user: User): Account[]
 }
 
 export { Entity, Profile, EntityDataSource, Account, Group, GroupDataSource, User, UserDataSource }
