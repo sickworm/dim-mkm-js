@@ -12,17 +12,22 @@ interface Entity {
     readonly identifier: ID
 }
 
-interface Profile {
+interface TAI {
     readonly identifier: ID
-    readonly name?: string
-    readonly avatar?: string
+    readonly data: string
+    readonly signature: string // base64
     readonly [key: string]: any
 }
 
+interface Profile extends TAI {
+    readonly name: string
+    readonly key: PublicKey
+}
+
 interface EntityDataSource {
-    getMeta(entity: Entity): Meta
-    getProfile(entity: Entity): Profile
-    getName(entity: Entity): string
+    getMeta(entity: Entity | ID): Meta
+    getProfile(entity: Entity | ID): Profile
+    getName(entity: Entity | ID): string
 }
 
 interface User extends Entity {
@@ -34,8 +39,8 @@ interface LocalUser extends User {
 }
 
 interface UserDataSource {
-    getPrivateKey(user: LocalUser): PrivateKey
-    getContacts(user: LocalUser): LocalUser[]
+    getPrivateKey(user: LocalUser | User | ID): PrivateKey
+    getContacts(user: LocalUser | User | ID): ID[]
 }
 
 interface Group extends Entity {
@@ -43,9 +48,9 @@ interface Group extends Entity {
 }
 
 interface GroupDataSource {
-    getFounder(group: ID): ID
-    getOwner(group: ID): ID
-    getMembers(group: ID): ID[]
+    getFounder(group: Group | ID): ID
+    getOwner(group: Group | ID): ID
+    getMembers(group: Group | ID): ID[]
 }
 
 export { Entity, Profile, EntityDataSource, User, LocalUser, UserDataSource, Group, GroupDataSource}

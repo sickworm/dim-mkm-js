@@ -160,6 +160,9 @@ class NetworkType {
  *          address     = base58_encode(network + digest + check_code);
  */
 class Address implements AddressConstructor {
+    static readonly ANYWHERE = new Address({string: 'anywhere', network: NetworkType.Main, code: 9527})
+    static readonly EVERYWHERE = new Address({string: 'everywhere', network: NetworkType.Group, code: 9527})
+
     readonly string: string
     readonly network: NetworkType
     readonly code: number
@@ -168,6 +171,10 @@ class Address implements AddressConstructor {
         this.string = address.string
         this.network = address.network
         this.code = address.code
+    }
+
+    isBoardcast(): boolean {
+        return this === Address.EVERYWHERE || this === Address.ANYWHERE
     }
 
     euqals(address: Address): boolean {

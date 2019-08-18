@@ -57,8 +57,8 @@ class RsaPrivateKey implements PrivateKey {
         return this._key.sign(data)
     }
     
-    decrypt(data: Buffer): Buffer {
-        return this._key.decrypt(data)
+    decrypt(encryptedData: Buffer): Buffer {
+        return this._key.decrypt(encryptedData)
     }
 }
 
@@ -126,12 +126,25 @@ class AesSymmKey implements SymmKey {
         return new AesSymmKey(algorithm, data)
     }
 
+    static fromString(data: string): AesSymmKey {
+        let object = JSON.parse(data)
+        if (!object || !object.algorithm || !object.data) {
+            // TODO create base crypto and error module for mkm and dkd
+            throw TypeError(`data not AesSymmKey: ${data}`)
+        }
+        return object as AesSymmKey
+    }
+
+    static toString(): string {
+        return JSON.stringify(this)
+    }
+
     encrypt(data: Buffer): Buffer {
         let encData = CryptoJS.AES.encrypt(toLibWordArray(data), this._key, this._opts)
         return Buffer.from(encData.toString(), 'base64')
     }
 
-    decrypt(encData: Buffer): any {
+    decrypt(encData: Buffer): Buffer {
         let data = CryptoJS.AES.decrypt({ ciphertext: toLibWordArray(encData) }, this._key, this._opts)
         return Buffer.from(data.toString(CryptoJS.enc.Base64), 'base64')
     }
