@@ -1,6 +1,6 @@
 import { Address, NetworkType } from '../src/address'
 import { ID } from '../src/identifier'
-import { Account, User } from '../src/entity'
+import { User, LocalUser } from '../src/entity'
 import { RsaPrivateKey } from '../src/crypto';
 import { Meta } from '../src/meta';
 
@@ -32,15 +32,15 @@ describe('entity.ts', () => {
         let seed = 'moky'
         let meta = Meta.fromKeyAndSeed(privateKey, seed)
         let identifier = meta.buildId(NetworkType.Main)
-        let user: User = { identifier, privateKey, publicKey }
+        let user: LocalUser = { identifier, privateKey, publicKey }
     })
 
     test('entity', () => {
         let privateKey = RsaPrivateKey.create()
         let publicKey = privateKey.toPublicKey()
         let identifier = ID.fromString('moky@4DnqXWdTV8wuZgfqSCX9GjE2kNq7HJrUgQ')
-        let account: Account = {identifier, publicKey}
-        let user: User = {identifier, publicKey, privateKey}
+        let account: User = {identifier, publicKey}
+        let user: LocalUser = {identifier, publicKey, privateKey}
         expect(account.identifier.number).toBe(4049699527)
         expect(user.identifier.number).toBe(4049699527)
         expect(account.identifier).toEqual(user.identifier)

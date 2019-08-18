@@ -25,8 +25,17 @@ interface EntityDataSource {
     getName(entity: Entity): string
 }
 
-interface Account extends Entity {
+interface User extends Entity {
     readonly publicKey: PublicKey
+}
+
+interface LocalUser extends User {
+    readonly privateKey: PrivateKey
+}
+
+interface UserDataSource {
+    getPrivateKey(user: LocalUser): PrivateKey
+    getContacts(user: LocalUser): LocalUser[]
 }
 
 interface Group extends Entity {
@@ -39,13 +48,4 @@ interface GroupDataSource {
     getMembers(group: ID): ID[]
 }
 
-interface User extends Account {
-    readonly privateKey: PrivateKey
-}
-
-interface UserDataSource {
-    getPrivateKey(user: User): PrivateKey
-    getContacts(user: User): Account[]
-}
-
-export { Entity, Profile, EntityDataSource, Account, Group, GroupDataSource, User, UserDataSource }
+export { Entity, Profile, EntityDataSource, User, LocalUser, UserDataSource, Group, GroupDataSource}

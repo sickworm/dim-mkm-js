@@ -1,8 +1,6 @@
 import { ID } from './identifier'
-import { Crypto, PrivateKey, PublicKey } from './crypto';
-import { Address, NetworkType } from './address';
-import { verify } from 'crypto';
-import { identifier } from '@babel/types';
+import { PrivateKey, PublicKey } from './crypto'
+import { Address, NetworkType } from './address'
 
 /**
  *  Account/Group Meta data
