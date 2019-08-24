@@ -39,7 +39,7 @@ interface LocalUser extends User {
 }
 
 interface UserDataSource {
-    getPrivateKey(user: LocalUser | User | ID): PrivateKey
+    getPrivateKey(user: LocalUser | ID): PrivateKey
     getContacts(user: LocalUser | User | ID): ID[]
 }
 
