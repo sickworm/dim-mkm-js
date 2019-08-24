@@ -1,8 +1,10 @@
+import 'mocha'
+import * as expect from 'expect'
 import { Address, NetworkType } from '../src/address'
 import { ID } from '../src/identifier'
 import { User, LocalUser } from '../src/entity'
-import { RsaPrivateKey } from '../src/crypto';
-import { Meta } from '../src/meta';
+import { RsaPrivateKey } from '../src/crypto'
+import { Meta } from '../src/meta'
 
 describe('entity.ts', () => {
 
