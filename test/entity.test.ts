@@ -1,5 +1,3 @@
-import 'mocha'
-import * as expect from 'expect'
 import { Address, NetworkType } from '../src/address'
 import { ID } from '../src/identifier'
 import { User, LocalUser } from '../src/entity'

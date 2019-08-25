@@ -73,10 +73,10 @@ class RsaPublicKey implements PublicKey {
         this._key = new NodeRSA(key.data)
     }
 
-    static fromPem(pem: string) {
+    static fromPem(pem: string): RsaPublicKey {
         let format: NodeRSA.FormatPem = 'pkcs8-public-pem'
         let key = new NodeRSA(pem, format)
-        return new RsaPrivateKey({algorithm: 'RSA' + key.getKeySize(), data: key.exportKey(format)})
+        return new RsaPublicKey({algorithm: 'RSA' + key.getKeySize(), data: key.exportKey(format)})
     }
 
     static fromPrivateKey(key: RsaPrivateKey) {

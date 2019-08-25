@@ -1,5 +1,3 @@
-import 'mocha'
-import * as expect from 'expect'
 import { Crypto, RsaPrivateKey, RsaPublicKey, AesSymmKey } from '../src/crypto'
 import * as CryptoJS from 'crypto-js'
 
