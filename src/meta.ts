@@ -21,7 +21,8 @@ import { Address, NetworkType } from './address'
  *          address = base58_encode(network + hash + code);
  *          number  = uint(code);
  */
-class Meta implements MetaConstructor{
+// TODO interface and module
+class Meta implements MetaConstructor {
     readonly version: MetaVersion
     readonly publicKey: PublicKey
     readonly seed: string

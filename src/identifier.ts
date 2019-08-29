@@ -57,6 +57,10 @@ class ID implements IDConstructor {
     toString(): string {
         return this.string
     }
+
+    toJson(): string {
+        return this.string
+    }
 }
 
 interface IDConstructor {

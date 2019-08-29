@@ -12,16 +12,23 @@ interface Entity {
     readonly identifier: ID
 }
 
-interface TAI {
-    readonly identifier: ID
-    readonly data: string
-    readonly signature: string // base64
-    readonly [key: string]: any
+
+interface UnsignedTAI {
+    readonly identifier: ID;
+    readonly data?: string;
+    readonly [key: string]: any;
 }
 
-interface Profile extends TAI {
+interface TAI extends UnsignedTAI {
+    readonly signature: string // base64
+}
+
+interface UnsignedProfile extends UnsignedTAI {
     readonly name: string
     readonly key: PublicKey
+}
+
+interface Profile extends UnsignedProfile, TAI {
 }
 
 interface EntityDataSource {
@@ -53,4 +60,4 @@ interface GroupDataSource {
     getMembers(group: Group | ID): ID[]
 }
 
-export { Entity, Profile, EntityDataSource, User, LocalUser, UserDataSource, Group, GroupDataSource}
+export { Entity, TAI, UnsignedTAI, Profile, UnsignedProfile, EntityDataSource, User, LocalUser, UserDataSource, Group, GroupDataSource}
