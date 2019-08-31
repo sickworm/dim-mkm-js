@@ -18,14 +18,6 @@ interface PrivateKey extends AsymKey {
     decrypt(data: Buffer): Buffer
 }
 
-interface SymmKey {
-    readonly algorithm: string
-    readonly data: string
-
-    encrypt(data: Buffer): Buffer
-    decrypt(enc: Buffer): Buffer
-}
-
 class RsaPrivateKey implements PrivateKey {
     readonly algorithm: string
     readonly data: string
@@ -48,6 +40,15 @@ class RsaPrivateKey implements PrivateKey {
         return new RsaPrivateKey({algorithm: 'RSA' + key.getKeySize(), data: key.exportKey(format)})
     }
 
+    static fromString(data: string): RsaPrivateKey {
+        let object = JSON.parse(data)
+        if (!object || !object.algorithm || !object.data) {
+            // TODO create base crypto and error module for mkm and dkd
+            throw TypeError(`data not AesSymmKey: ${data}`)
+        }
+        return new RsaPrivateKey(object)
+    }
+
     toPublicKey(): PublicKey {
         let data = this._key.exportKey('pkcs8-public-pem')
         return new RsaPublicKey({algorithm: this.algorithm, data: data})
@@ -59,6 +60,14 @@ class RsaPrivateKey implements PrivateKey {
     
     decrypt(encryptedData: Buffer): Buffer {
         return this._key.decrypt(encryptedData)
+    }
+
+    toString(): string {
+        return JSON.stringify({algorithm: this.algorithm, data: this.data})
+    }
+
+    toJSON() {
+        return {algorithm: this.algorithm, data: this.data}
     }
 }
 
@@ -83,6 +92,15 @@ class RsaPublicKey implements PublicKey {
         return key.toPublicKey()
     }
 
+    static fromString(data: string): RsaPublicKey {
+        let object = JSON.parse(data)
+        if (!object || !object.algorithm || !object.data) {
+            // TODO create base crypto and error module for mkm and dkd
+            throw TypeError(`data not AesSymmKey: ${data}`)
+        }
+        return new RsaPublicKey(object)
+    }
+
     verify(data: Buffer, signature: Buffer): boolean {
         return this._key.verify(data, signature)
     }
@@ -90,6 +108,24 @@ class RsaPublicKey implements PublicKey {
     encrypt(data: Buffer): Buffer {
         return this._key.encrypt(data)
     }
+
+    toString(): string {
+        return JSON.stringify({algorithm: this.algorithm, data: this.data})
+    }
+
+    toJSON() {
+        return {algorithm: this.algorithm, data: this.data}
+    }
+}
+
+interface SymmKeyData {
+    readonly algorithm: string
+    readonly data: string
+}
+
+interface SymmKey extends SymmKeyData {
+    encrypt(data: Buffer): Buffer
+    decrypt(enc: Buffer): Buffer
 }
 
 class AesSymmKey implements SymmKey {
@@ -98,11 +134,11 @@ class AesSymmKey implements SymmKey {
     private readonly _key: CryptoJS.LibWordArray
     private readonly _opts: CryptoJS.CipherOption
 
-    constructor(algorithm: string, data: string) {
-        this.algorithm = algorithm
-        this.data = data
+    constructor(key: SymmKeyData) {
+        this.algorithm = key.algorithm
+        this.data = key.data
 
-        let json = JSON.parse(data)
+        let json = JSON.parse(key.data)
         this._key = toLibWordArray(Buffer.from(json.key, 'base64'))
         this._opts = {
             iv: toLibWordArray(Buffer.from(json.iv, 'base64')),
@@ -123,7 +159,7 @@ class AesSymmKey implements SymmKey {
             key: key.toString('base64'),
             iv: iv.toString('base64')
         })
-        return new AesSymmKey(algorithm, data)
+        return new AesSymmKey({algorithm, data})
     }
 
     static fromString(data: string): AesSymmKey {
@@ -132,11 +168,7 @@ class AesSymmKey implements SymmKey {
             // TODO create base crypto and error module for mkm and dkd
             throw TypeError(`data not AesSymmKey: ${data}`)
         }
-        return object as AesSymmKey
-    }
-
-    static toString(): string {
-        return JSON.stringify(this)
+        return new AesSymmKey(object)
     }
 
     encrypt(data: Buffer): Buffer {
@@ -147,6 +179,14 @@ class AesSymmKey implements SymmKey {
     decrypt(encData: Buffer): Buffer {
         let data = CryptoJS.AES.decrypt({ ciphertext: toLibWordArray(encData) }, this._key, this._opts)
         return Buffer.from(data.toString(CryptoJS.enc.Base64), 'base64')
+    }
+
+    toString(): string {
+        return JSON.stringify({algorithm: this.algorithm, data: this.data})
+    }
+
+    toJSON() {
+        return {algorithm: this.algorithm, data: this.data}
     }
 }
 

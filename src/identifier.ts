@@ -58,8 +58,8 @@ class ID implements IDConstructor {
         return this.string
     }
 
-    toJson(): string {
-        return this.string
+    toJSON() {
+        return this.toString()
     }
 }
 
