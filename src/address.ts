@@ -196,7 +196,7 @@ class Address implements AddressConstructor {
             throw Error('Address fromString data.length != 25')
         }
         let network = NetworkType.fromNumber(data[0])
-        let code = Address.userNumber(Crypto.hash256(Crypto.hash256(data.slice(0, 21))))
+        let code = Address.userNumber(Crypto.sha256(Crypto.sha256(data.slice(0, 21))))
         return new Address({string, network, code})
     }
 
@@ -207,11 +207,11 @@ class Address implements AddressConstructor {
      *  @param network - network ID
      */
     static fromFingerprint(fingerprint: string, network: NetworkType): Address {
-        let digest = Crypto.ripemd160(Crypto.hash256(Buffer.from(fingerprint, 'base64')))
+        let digest = Crypto.ripemd160(Crypto.sha256(Buffer.from(fingerprint, 'base64')))
         let head = Buffer.alloc(21)
         head[0] = network.value
         digest.copy(head, 1)
-        let cc = Crypto.hash256(Crypto.hash256(head))
+        let cc = Crypto.sha256(Crypto.sha256(head))
         let code = Address.userNumber(cc)
         let data = Buffer.concat([head, cc])
         let string = Crypto.base58Encode(data)

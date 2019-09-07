@@ -27,6 +27,7 @@ class RsaPrivateKey implements PrivateKey {
         this.algorithm = key.algorithm
         this.data = key.data
         this._key = new NodeRSA(key.data)
+        this._key.setOptions({encryptionScheme: 'pkcs1'})
     }
 
     static create(bits: number = 1024): RsaPrivateKey {
@@ -80,6 +81,7 @@ class RsaPublicKey implements PublicKey {
         this.algorithm = key.algorithm
         this.data = key.data
         this._key = new NodeRSA(key.data)
+        this._key.setOptions({encryptionScheme: 'pkcs1'})
     }
 
     static fromPem(pem: string): RsaPublicKey {
@@ -200,7 +202,7 @@ class Crypto {
         return bs58.encode(address)
     }
 
-    static hash256(data: Buffer): Buffer {
+    static sha256(data: Buffer): Buffer {
         return toBuffer(CryptoJS.SHA256(toLibWordArray(data)))
     }
 
