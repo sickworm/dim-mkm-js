@@ -122,7 +122,8 @@ class RsaPublicKey implements PublicKey {
 
 interface SymmKeyData {
     readonly algorithm: string
-    readonly data: string
+    readonly data: string // base64
+    readonly iv?: string // base64
 }
 
 interface SymmKey extends SymmKeyData {
@@ -133,44 +134,34 @@ interface SymmKey extends SymmKeyData {
 class AesSymmKey implements SymmKey {
     readonly algorithm: string
     readonly data: string
+    readonly iv?: string
     private readonly _key: CryptoJS.LibWordArray
     private readonly _opts: CryptoJS.CipherOption
 
     constructor(key: SymmKeyData) {
         this.algorithm = key.algorithm
         this.data = key.data
+        this.iv = key.iv
 
-        let json = JSON.parse(key.data)
-        this._key = toLibWordArray(Buffer.from(json.key, 'base64'))
+        this._key = toLibWordArray(Buffer.from(key.data, 'base64'))
         this._opts = {
-            iv: toLibWordArray(Buffer.from(json.iv, 'base64')),
+            iv: key.iv && toLibWordArray(Buffer.from(key.iv, 'base64')) || undefined,
             mode: CryptoJS.mode.CBC,
             padding: CryptoJS.pad.Pkcs7
         }
     }
 
-    static create(bits: number = 256, key?: Buffer, iv?: Buffer) {
+    static create(bits: number = 256, key?: Buffer, ivBuffer?: Buffer) {
         if (bits !== 128 && bits !== 192 && bits !== 256) {
             throw Error(`AES create invalid bits ${bits}`)
         }
         key = key || Crypto.random(bits / 8)
-        iv = iv || Crypto.random(128 / 8)
+        ivBuffer = ivBuffer || Crypto.random(128 / 8)
 
         let algorithm = 'AES' + bits
-        let data = JSON.stringify({
-            key: key.toString('base64'),
-            iv: iv.toString('base64')
-        })
-        return new AesSymmKey({algorithm, data})
-    }
-
-    static fromString(data: string): AesSymmKey {
-        let object = JSON.parse(data)
-        if (!object || !object.algorithm || !object.data) {
-            // TODO create base crypto and error module for mkm and dkd
-            throw TypeError(`data not AesSymmKey: ${data}`)
-        }
-        return new AesSymmKey(object)
+        let data = key.toString('base64')
+        let iv = ivBuffer.toString('base64')
+        return new AesSymmKey({algorithm, data, iv})
     }
 
     encrypt(data: Buffer): Buffer {
@@ -188,7 +179,7 @@ class AesSymmKey implements SymmKey {
     }
 
     toJSON() {
-        return {algorithm: this.algorithm, data: this.data}
+        return {algorithm: this.algorithm, data: this.data, iv: this.iv}
     }
 }
 
