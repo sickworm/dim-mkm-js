@@ -144,6 +144,11 @@ class AesSymmKey implements SymmKey {
         this.iv = key.iv
 
         this._key = toLibWordArray(Buffer.from(key.data, 'base64'))
+        let length = this._key.words.length * 4
+        if (length !== 16 && length !== 24 && length !== 32) {
+            throw Error(`AES create invalid bits ${length}`)
+        }
+
         this._opts = {
             iv: key.iv && toLibWordArray(Buffer.from(key.iv, 'base64')) || undefined,
             mode: CryptoJS.mode.CBC,
@@ -152,13 +157,14 @@ class AesSymmKey implements SymmKey {
     }
 
     static create(bits: number = 256, key?: Buffer, ivBuffer?: Buffer) {
-        if (bits !== 128 && bits !== 192 && bits !== 256) {
-            throw Error(`AES create invalid bits ${bits}`)
-        }
         key = key || Crypto.random(bits / 8)
         ivBuffer = ivBuffer || Crypto.random(128 / 8)
 
-        let algorithm = 'AES' + bits
+        if (bits / 8 !== key.length) {
+            throw Error(`AES create invalid bits ${bits} !== key.length ${key.length}`)
+        }
+
+        let algorithm = 'AES'
         let data = key.toString('base64')
         let iv = ivBuffer.toString('base64')
         return new AesSymmKey({algorithm, data, iv})
