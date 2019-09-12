@@ -226,7 +226,7 @@ class Crypto {
         return buffer
     }
     
-    static randomInt(max: number) {
+    static randomInt(max: number = Number.MAX_SAFE_INTEGER) {
         return Math.floor(Math.random() * Math.floor(max));
     }
 }
